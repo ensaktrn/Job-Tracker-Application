@@ -2,7 +2,7 @@ using JobTracker.Domain.Enums;
 
 namespace JobTracker.Domain.Entities;
 
-public sealed class Application
+public sealed class JobApplication
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
 
@@ -14,9 +14,9 @@ public sealed class Application
     public DateTimeOffset AppliedAt { get; private set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset LastUpdatedAt { get; private set; } = DateTimeOffset.UtcNow;
 
-    private Application() { }
+    private JobApplication() { }
 
-    public Application(Guid jobPostingId)
+    public JobApplication(Guid jobPostingId)
     {
         if (jobPostingId == Guid.Empty)
             throw new ArgumentException("JobPostingId cannot be empty.", nameof(jobPostingId));
