@@ -2,6 +2,10 @@ using JobTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Application.Companies;
 using JobTracker.Infrastructure.Companies;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using JobTracker.Application.Companies;
+
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -12,6 +16,8 @@ builder.Services.AddDbContext<AppDbContext>(options => { options.UseNpgsql(build
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCompanyRequestValidator>();
 
 var app = builder.Build();
 
