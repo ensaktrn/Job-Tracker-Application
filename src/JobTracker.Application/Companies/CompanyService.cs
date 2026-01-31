@@ -26,4 +26,15 @@ public sealed class CompanyService : ICompanyService
             .Select(c => new CompanyDto(c.Id, c.Name, c.Website, c.CreatedAt))
             .ToList();
     }
+    
+    public async Task<CompanyDto?> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        if (id == Guid.Empty) return null;
+
+        var company = await _repo.GetByIdAsync(id, ct);
+        if (company is null) return null;
+
+        return new CompanyDto(company.Id, company.Name, company.Website, company.CreatedAt);
+    }
+
 }

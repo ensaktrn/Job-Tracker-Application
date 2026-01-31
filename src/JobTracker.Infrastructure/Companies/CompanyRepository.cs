@@ -19,4 +19,8 @@ public sealed class CompanyRepository : ICompanyRepository
 
     public async Task SaveChangesAsync(CancellationToken ct)
         => await _db.SaveChangesAsync(ct);
+    
+    public async Task<Company?> GetByIdAsync(Guid id, CancellationToken ct)
+        => await _db.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct);
+
 }
