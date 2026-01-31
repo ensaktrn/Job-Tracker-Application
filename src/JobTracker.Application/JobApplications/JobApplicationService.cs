@@ -1,3 +1,4 @@
+using JobTracker.Application.Common;
 using JobTracker.Application.JobPostings;
 using JobTracker.Domain.Entities;
 
@@ -31,11 +32,8 @@ public sealed class JobApplicationService : IJobApplicationService
         return ToDto(app);
     }
 
-    public async Task<IReadOnlyList<JobApplicationDto>> GetAllAsync(CancellationToken ct)
-    {
-        var apps = await _repo.GetAllAsync(ct);
-        return apps.Select(ToDto).ToList();
-    }
+    public Task<PagedResult<JobApplicationDto>> GetAsync(GetJobApplicationsQuery query, CancellationToken ct)
+        => _repo.QueryAsync(query, ct);
 
     public async Task<JobApplicationDto?> GetByIdAsync(Guid id, CancellationToken ct)
     {
