@@ -6,6 +6,9 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using JobTracker.Application.Companies;
 using JobTracker.Api.Middleware;
+using JobTracker.Application.JobPostings;
+using JobTracker.Infrastructure.JobPostings;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,9 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateCompanyRequestValidator>();
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+builder.Services.AddScoped<ICompanyReadRepository, CompanyReadRepository>();
+builder.Services.AddScoped<IJobPostingRepository, JobPostingRepository>();
+builder.Services.AddScoped<IJobPostingService, JobPostingService>();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
