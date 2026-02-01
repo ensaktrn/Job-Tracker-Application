@@ -1,9 +1,11 @@
+using JobTracker.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using JobTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobTracker.Infrastructure.Data;
 
-public sealed class AppDbContext : DbContext
+public sealed class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
@@ -13,6 +15,8 @@ public sealed class AppDbContext : DbContext
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<JobPosting> JobPostings => Set<JobPosting>();
     public DbSet<JobApplication> Applications => Set<JobApplication>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,5 +82,25 @@ public sealed class AppDbContext : DbContext
                 .HasForeignKey(x => x.JobPostingId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+        
+        // Refresh Token
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.UserId)
+                .IsRequired()
+                .HasMaxLength(450);
+
+            entity.Property(x => x.Token)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.HasIndex(x => x.Token).IsUnique();
+
+            entity.Property(x => x.ExpiresAt).IsRequired();
+            entity.Property(x => x.CreatedAt).IsRequired();
+        });
+
     }
 }

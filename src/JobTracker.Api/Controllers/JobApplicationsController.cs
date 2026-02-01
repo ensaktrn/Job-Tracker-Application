@@ -2,9 +2,11 @@ using JobTracker.Application.Common;
 using JobTracker.Application.JobApplications;
 using Microsoft.AspNetCore.Mvc;
 using JobTracker.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobTracker.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/applications")]
 public sealed class JobApplicationsController : ControllerBase

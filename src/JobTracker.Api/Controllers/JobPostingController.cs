@@ -1,8 +1,10 @@
 using JobTracker.Application.JobPostings;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobTracker.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/job-postings")]
 public sealed class JobPostingsController : ControllerBase

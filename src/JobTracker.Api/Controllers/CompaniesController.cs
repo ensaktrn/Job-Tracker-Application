@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using JobTracker.Application.Companies;
 using Microsoft.AspNetCore.Mvc;
 
@@ -5,6 +6,7 @@ namespace JobTracker.Api.Controllers;
 
 [ApiController]
 [Route("api/companies")]
+[Authorize]
 public sealed class CompaniesController : ControllerBase
 {
     private readonly ICompanyService _service;
