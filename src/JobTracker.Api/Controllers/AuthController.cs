@@ -110,12 +110,19 @@ public sealed class AuthController : ControllerBase
     }
     
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout([FromBody] LogoutRequest request, CancellationToken ct)
+    public async Task<IActionResult> Logout(
+        [FromBody] LogoutRequest request,
+        CancellationToken ct)
     {
+        if (string.IsNullOrWhiteSpace(request.RefreshToken))
+            return BadRequest("Refresh token is required.");
+
         var token = await _db.RefreshTokens
             .FirstOrDefaultAsync(x => x.Token == request.RefreshToken, ct);
 
-        if (token is null) return Ok(); // token yoksa da OK diyebiliriz
+        // Token yoksa bile OK dönüyoruz → idempotent logout
+        if (token is null)
+            return Ok();
 
         token.Revoke();
         await _db.SaveChangesAsync(ct);
