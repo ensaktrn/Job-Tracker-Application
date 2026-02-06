@@ -4,5 +4,6 @@ public sealed record CompanyDto(
     Guid Id,
     string Name,
     string? Website,
-    DateTimeOffset CreatedAt
+    DateTimeOffset CreatedAt,
+    string CreatedByEmail
 );

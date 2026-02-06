@@ -6,5 +6,6 @@ public sealed record JobPostingDto(
     string Title,
     string Url,
     string? Notes,
-    DateTimeOffset CreatedAt
+    DateTimeOffset CreatedAt,
+    string CreatedByEmail
 );

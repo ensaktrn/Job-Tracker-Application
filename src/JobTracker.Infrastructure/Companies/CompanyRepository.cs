@@ -14,13 +14,39 @@ public sealed class CompanyRepository : ICompanyRepository
     public async Task AddAsync(Company company, CancellationToken ct)
         => await _db.Companies.AddAsync(company, ct);
 
-    public async Task<IReadOnlyList<Company>> GetAllAsync(CancellationToken ct)
-        => await _db.Companies.AsNoTracking().OrderBy(x => x.Name).ToListAsync(ct);
+    public async Task<IReadOnlyList<CompanyDto>> GetAllAsync(CancellationToken ct)
+    {
+        return await (
+            from c in _db.Companies.AsNoTracking()
+            join u in _db.Users.AsNoTracking() on c.UserId equals u.Id
+            orderby c.Name
+            select new CompanyDto(
+                c.Id,
+                c.Name,
+                c.Website,
+                c.CreatedAt,
+                u.Email ?? "(no email)"
+            )
+        ).ToListAsync(ct);
+    }
 
-    public async Task SaveChangesAsync(CancellationToken ct)
-        => await _db.SaveChangesAsync(ct);
+    public Task SaveChangesAsync(CancellationToken ct)
+        => _db.SaveChangesAsync(ct);
     
-    public async Task<Company?> GetByIdAsync(Guid id, CancellationToken ct)
-        => await _db.Companies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, ct);
+    public async Task<CompanyDto?> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        return await (
+            from c in _db.Companies.AsNoTracking()
+            join u in _db.Users.AsNoTracking() on c.UserId equals u.Id
+            where c.Id == id
+            select new CompanyDto(
+                c.Id,
+                c.Name,
+                c.Website,
+                c.CreatedAt,
+                u.Email ?? "(no email)"
+            )
+        ).FirstOrDefaultAsync(ct);
+    }
 
 }

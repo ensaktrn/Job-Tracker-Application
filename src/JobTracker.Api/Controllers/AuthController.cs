@@ -33,7 +33,7 @@ public sealed class AuthController : ControllerBase
     public sealed record RegisterRequest(string Email, string Password);
     public sealed record LoginRequest(string Email, string Password);
     public sealed record RefreshRequest(string AccessToken, string RefreshToken);
-
+    public sealed record LogoutRequest(string RefreshToken);
     public sealed record AuthResponse(string AccessToken, string RefreshToken);
 
     [HttpPost("register")]
@@ -107,5 +107,19 @@ public sealed class AuthController : ControllerBase
         await _db.SaveChangesAsync(ct);
 
         return Ok(new AuthResponse(newAccess, newRefresh));
+    }
+    
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout([FromBody] LogoutRequest request, CancellationToken ct)
+    {
+        var token = await _db.RefreshTokens
+            .FirstOrDefaultAsync(x => x.Token == request.RefreshToken, ct);
+
+        if (token is null) return Ok(); // token yoksa da OK diyebiliriz
+
+        token.Revoke();
+        await _db.SaveChangesAsync(ct);
+
+        return Ok();
     }
 }

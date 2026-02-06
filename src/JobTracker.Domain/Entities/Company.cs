@@ -3,7 +3,7 @@ namespace JobTracker.Domain.Entities;
 public sealed class Company
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
-
+    public string UserId { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;
     public string? Website { get; private set; }
 
@@ -12,12 +12,20 @@ public sealed class Company
     // EF Core için
     private Company() { }
 
-    public Company(string name, string? website)
+    public Company(string userId, string name, string? website)
     {
+        SetUser(userId);
         SetName(name);
         SetWebsite(website);
     }
+    
+    private void SetUser(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentException("UserId is required.", nameof(userId));
 
+        UserId = userId;
+    }
     public void SetName(string name)
     {
         name = (name ?? string.Empty).Trim();

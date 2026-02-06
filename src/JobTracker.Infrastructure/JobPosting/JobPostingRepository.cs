@@ -13,14 +13,41 @@ public sealed class JobPostingRepository : IJobPostingRepository
     public async Task AddAsync(JobPosting posting, CancellationToken ct)
         => await _db.JobPostings.AddAsync(posting, ct);
 
-    public async Task<IReadOnlyList<JobPosting>> GetAllAsync(CancellationToken ct)
-        => await _db.JobPostings.AsNoTracking()
-            .OrderByDescending(x => x.CreatedAt)
-            .ToListAsync(ct);
+    public async Task<IReadOnlyList<JobPostingDto>> GetAllAsync(CancellationToken ct)
+    {
+        return await (
+            from p in _db.JobPostings.AsNoTracking()
+            join u in _db.Users.AsNoTracking() on p.UserId equals u.Id
+            orderby p.CreatedAt descending
+            select new JobPostingDto(
+                p.Id,
+                p.CompanyId,
+                p.Title,
+                p.Url,
+                p.Notes,
+                p.CreatedAt,
+                u.Email ?? "(no email)"
+            )
+        ).ToListAsync(ct);
+    }
 
-    public async Task<JobPosting?> GetByIdAsync(Guid id, CancellationToken ct)
-        => await _db.JobPostings.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id, ct);
+    public async Task<JobPostingDto?> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        return await (
+            from p in _db.JobPostings.AsNoTracking()
+            join u in _db.Users.AsNoTracking() on p.UserId equals u.Id
+            where p.Id == id
+            select new JobPostingDto(
+                p.Id,
+                p.CompanyId,
+                p.Title,
+                p.Url,
+                p.Notes,
+                p.CreatedAt,
+                u.Email ?? "(no email)"
+            )
+        ).FirstOrDefaultAsync(ct);
+    }
 
     public Task SaveChangesAsync(CancellationToken ct)
         => _db.SaveChangesAsync(ct);

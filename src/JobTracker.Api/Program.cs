@@ -6,6 +6,7 @@ using FluentValidation;
 using JobTracker.Api.Auth;
 using FluentValidation.AspNetCore;
 using JobTracker.Api.Middleware;
+using JobTracker.Application.Common;
 using JobTracker.Application.JobPostings;
 using JobTracker.Infrastructure.JobPostings;
 using JobTracker.Application.JobApplications;
@@ -71,7 +72,8 @@ builder.Services.AddScoped<IJobPostingService, JobPostingService>();
 builder.Services.AddScoped<IJobPostingReadRepository, JobPostingReadRepository>();
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
