@@ -28,8 +28,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-builder.Services.AddScoped<ICompanyService, CompanyService>();
+
 builder.Services
     .AddControllers()
     .AddJsonOptions(options =>
@@ -66,6 +65,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateCompanyRequestValidator>();
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<ICompanyReadRepository, CompanyReadRepository>();
 builder.Services.AddScoped<IJobPostingRepository, JobPostingRepository>();
 builder.Services.AddScoped<IJobPostingService, JobPostingService>();
@@ -91,7 +92,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 var issuer = builder.Configuration["Jwt:Issuer"];
 var audience = builder.Configuration["Jwt:Audience"];
 var key = builder.Configuration["Jwt:Key"];
-// Development için PII aç (sebebi net görürsün)
+
 IdentityModelEventSource.ShowPII = true;
 builder.Services.Configure<JwtOptions>(o =>
 {
